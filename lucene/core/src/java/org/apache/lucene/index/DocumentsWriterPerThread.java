@@ -240,7 +240,15 @@ final class DocumentsWriterPerThread implements Accountable {
           // vs non-aborting exceptions):
           reserveOneDoc();
           try {
+            long t0 = System.nanoTime();
             indexingChain.processDocument(numDocsInRAM++, doc);
+            if (infoStream.isEnabled("DWPT")) {
+              infoStream.message(
+                  "DWPT",
+                  "addDocument took "
+                      + ((System.nanoTime() - t0) / (double) TimeUnit.MILLISECONDS.toNanos(1))
+                      + " ms");
+            }
           } finally {
             onNewDocOnRAM.run();
           }
